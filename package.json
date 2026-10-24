@@ -1,0 +1,27 @@
+{
+  "name": "fable-temporal-tests",
+  "version": "0.1.0",
+  "description": "Integration tests for Fable.Temporal",
+  "scripts": {
+    "build": "dotnet build tests/Tests.fsproj --nologo",
+    "compile": "dotnet fable tests/Tests.fsproj --outDir tests/dist",
+    "test": "pnpm run compile && node tests/dist/Tests.js",
+    "pack": "dotnet pack src/Fable.Temporal/Fable.Temporal.fsproj -c Release -o artifacts",
+    "test:native": "pnpm run compile && node scripts/test-native.mjs",
+    "test:compiler-flag": "dotnet fable tests/Tests.fsproj --test:js-temporal --outDir tests/dist-temporal && node tests/dist-temporal/Tests.js",
+    "format": "dotnet fantomas src/Fable.Temporal/Temporal.fs tests/Tests.fs",
+    "format:check": "dotnet fantomas src/Fable.Temporal/Temporal.fs tests/Tests.fs --check",
+    "test:types": "pnpm run build && node scripts/test-types.mjs",
+    "test:docs": "node scripts/test-docs.mjs",
+    "test:package": "pnpm run pack && node scripts/test-package.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "temporal-polyfill": "^1.0.6"
+  },
+  "private": true,
+  "packageManager": "pnpm@10.32.1"
+}

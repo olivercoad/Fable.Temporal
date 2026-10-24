@@ -1,0 +1,437 @@
+[
+  {
+    "name": "construction-and-patches",
+    "valid": true,
+    "code": "let d = t.PlainDate.From(DateFields(2024, 2, 29))\nd.With(DatePatch.Create(DateChange.Day 20, DateChange.Month 3)) |> ignore\nlet dt = t.PlainDateTime.From(DateTimeFields(2024, 2, 29, hour = 3))\ndt.With(DateTimePatch.Create(DateTimeChange.Minute 15)) |> ignore\nlet z = t.ZonedDateTime.From(ZonedDateTimeFields(2024, 2, 29, \"UTC\"))\nz.With(ZonedPatch.Create(ZonedChange.Hour 1))"
+  },
+  {
+    "name": "duration-capabilities",
+    "valid": true,
+    "code": "let i = t.Instant.Create(0I)\nlet time = t.Duration.CreateTime(hours = 1u)\nlet delta: TimeDuration = time.Add(TimeDurationFields(0u, nanoseconds = 1u))\ni.Add(delta) |> ignore\nlet fixedTime = t.Duration.CreateFixed(days = 1u)\nfixedTime.Add(FixedDurationFields(0u, hours = 3u)).Total(DayTimeUnit.Hour)"
+  },
+  {
+    "name": "typed-options",
+    "valid": true,
+    "code": "let options: TimeRoundOptions = TimeRoundOptions(TimeUnit.Minute, roundingIncrement = 15)\nt.PlainTime.Create().Round(options) |> ignore\nlet diff: DateDifferenceOptions = DateDifferenceOptions(smallestUnit = DateUnit.Day, largestUnit = DateUnit.Month)\nt.PlainDate.Create(2024,1,1).Until(\"2024-02-01\", diff)"
+  },
+  {
+    "name": "locale-modes",
+    "valid": true,
+    "code": "let d = t.PlainDate.Create(2024,2,29)\nd.ToLocaleString(\"en\", DateLocaleOptions(month = MonthStyle.Long)) |> ignore\nd.ToLocaleString(DateStyleOptions(dateStyle = FormatStyle.Long), locales = \"en\") |> ignore\nt.PlainTime.Create().ToLocaleString(\"en\", TimeLocaleOptions(fractionalSecondDigits = LocaleSecondDigits.Three)) |> ignore\nt.Now.ZonedDateTimeISO(\"UTC\").ToLocaleString(\"en\", ZonedLocaleOptions(timeZoneName = ZoneFormatStyle.Long))"
+  },
+  {
+    "name": "calendar-duration-context",
+    "valid": true,
+    "code": "let d = t.Duration.Parse(\"P1M\")\nlet relative = RelativeTo.Text \"2024-01-01\"\nd.Round(DurationRoundOptions(DateTimeUnit.Day, relative)) |> ignore\nd.Total(TotalOptions(DateTimeUnit.Day, relative)) |> ignore\nt.Duration.Compare(\"P1M\", \"P30D\", RelativeToOptions(relative))"
+  },
+  {
+    "name": "precision-and-sign",
+    "valid": true,
+    "code": "let d = t.Duration.From(DurationFields(0u, years = 1u, days = 2u)).Negated()\nd.WithMagnitude(DurationPatch.Create(DurationChange.Days 3u)) |> ignore\nd.ToString(DurationFormatOptions(smallestUnit = DurationPrecisionUnit.Second, fractionalSecondDigits = FractionalSecondDigits.Digits FractionalDigits.Nine))"
+  },
+  {
+    "name": "incomplete-date",
+    "valid": false,
+    "code": "t.PlainDate.From(DateFields(day = 1))"
+  },
+  {
+    "name": "incomplete-datetime",
+    "valid": false,
+    "code": "t.PlainDateTime.From(DateTimeFields(hour = 1))"
+  },
+  {
+    "name": "incomplete-yearmonth",
+    "valid": false,
+    "code": "t.PlainYearMonth.From(YearMonthFields(month = 2))"
+  },
+  {
+    "name": "incomplete-monthday",
+    "valid": false,
+    "code": "t.PlainMonthDay.From(MonthDayFields(day = 2))"
+  },
+  {
+    "name": "incomplete-zoned",
+    "valid": false,
+    "code": "t.ZonedDateTime.From(ZonedDateTimeFields(2024,1,1))"
+  },
+  {
+    "name": "empty-time-fields",
+    "valid": false,
+    "code": "t.PlainTime.From(TimeFields())"
+  },
+  {
+    "name": "empty-duration-fields",
+    "valid": false,
+    "code": "t.Duration.From(DurationFields())"
+  },
+  {
+    "name": "empty-time-duration-fields",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(TimeDurationFields())"
+  },
+  {
+    "name": "empty-patch",
+    "valid": false,
+    "code": "t.PlainDate.Create(2024,1,1).With(DatePatch.Create())"
+  },
+  {
+    "name": "construction-bag-as-patch",
+    "valid": false,
+    "code": "t.PlainDate.Create(2024,1,1).With(DateFields(2024,1,2))"
+  },
+  {
+    "name": "patch-as-construction",
+    "valid": false,
+    "code": "t.PlainDate.From(DatePatch.Create(DateChange.Day 1))"
+  },
+  {
+    "name": "date-patch-calendar",
+    "valid": false,
+    "code": "DatePatch.Create(DateChange.Calendar \"hebrew\")"
+  },
+  {
+    "name": "zoned-patch-timezone",
+    "valid": false,
+    "code": "ZonedPatch.Create(ZonedChange.TimeZone \"UTC\")"
+  },
+  {
+    "name": "zoned-patch-calendar",
+    "valid": false,
+    "code": "ZonedPatch.Create(ZonedChange.Calendar \"hebrew\")"
+  },
+  {
+    "name": "instant-general-duration",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(t.Duration.Parse(\"P1D\"))"
+  },
+  {
+    "name": "instant-fixed-days",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(t.Duration.CreateFixed(days = 1u))"
+  },
+  {
+    "name": "instant-string-duration",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(\"P1D\")"
+  },
+  {
+    "name": "instant-date-fields",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(DurationFields(0u, days = 1u))"
+  },
+  {
+    "name": "instant-date-units",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Round(DateUnit.Day)"
+  },
+  {
+    "name": "instant-wrong-round-options",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Round(DayTimeRoundOptions(DayTimeUnit.Day))"
+  },
+  {
+    "name": "date-time-difference-options",
+    "valid": false,
+    "code": "t.PlainDate.Create(2024,1,1).Until(\"2024-01-02\", TimeDifferenceOptions(smallestUnit = TimeUnit.Hour))"
+  },
+  {
+    "name": "duration-calendar-add",
+    "valid": false,
+    "code": "t.Duration.Parse(\"P1M\").Add(t.Duration.CreateTime(hours = 1u))"
+  },
+  {
+    "name": "duration-raw-string-add",
+    "valid": false,
+    "code": "t.Duration.CreateTime(hours = 1u).Add(\"P1M\")"
+  },
+  {
+    "name": "fixed-general-add",
+    "valid": false,
+    "code": "t.Duration.CreateFixed(days = 1u).Add(t.Duration.Parse(\"P1M\"))"
+  },
+  {
+    "name": "general-total-without-context",
+    "valid": false,
+    "code": "t.Duration.Parse(\"P1M\").Total(DateTimeUnit.Day)"
+  },
+  {
+    "name": "calendar-total-on-fixed",
+    "valid": false,
+    "code": "t.Duration.CreateFixed(days = 1u).Total(DateTimeUnit.Month)"
+  },
+  {
+    "name": "total-options-without-context",
+    "valid": false,
+    "code": "TotalOptions(DateTimeUnit.Month)"
+  },
+  {
+    "name": "round-options-without-unit",
+    "valid": false,
+    "code": "DurationRoundOptions(relativeTo = RelativeTo.Text \"2024-01-01\")"
+  },
+  {
+    "name": "round-options-without-context",
+    "valid": false,
+    "code": "DurationRoundOptions(DateTimeUnit.Month)"
+  },
+  {
+    "name": "general-round-without-context",
+    "valid": false,
+    "code": "t.Duration.Parse(\"P1M\").Round(DateTimeUnit.Day)"
+  },
+  {
+    "name": "calendar-compare-without-context",
+    "valid": false,
+    "code": "t.Duration.Compare(\"P1M\", \"P30D\")"
+  },
+  {
+    "name": "empty-relative-context",
+    "valid": false,
+    "code": "RelativeToOptions()"
+  },
+  {
+    "name": "duration-minute-format",
+    "valid": false,
+    "code": "t.Duration.Parse(\"PT1H\").ToString(PrecisionOptions(smallestUnit = PrecisionUnit.Minute))"
+  },
+  {
+    "name": "duration-wrong-precision-enum",
+    "valid": false,
+    "code": "DurationFormatOptions(smallestUnit = PrecisionUnit.Minute)"
+  },
+  {
+    "name": "unbounded-precision",
+    "valid": false,
+    "code": "InstantFormatOptions(fractionalSecondDigits = 10)"
+  },
+  {
+    "name": "unbounded-intl-precision",
+    "valid": false,
+    "code": "TimeLocaleOptions(fractionalSecondDigits = 9)"
+  },
+  {
+    "name": "precision-forged",
+    "valid": false,
+    "code": "FractionalDigits 42"
+  },
+  {
+    "name": "negative-duration-field",
+    "valid": false,
+    "code": "DurationFields(0u, hours = -1)"
+  },
+  {
+    "name": "fractional-duration-field",
+    "valid": false,
+    "code": "DurationFields(0u, hours = 1.5)"
+  },
+  {
+    "name": "fractional-duration-constructor",
+    "valid": false,
+    "code": "t.Duration.Create(hours = 1.5)"
+  },
+  {
+    "name": "duration-signed-patch",
+    "valid": false,
+    "code": "DurationPatch.Create(DurationChange.Hours -1)"
+  },
+  {
+    "name": "plain-time-overflow-option",
+    "valid": false,
+    "code": "t.PlainTime.Create().Add(\"PT1H\", OverflowOptions(overflow = Overflow.Reject))"
+  },
+  {
+    "name": "plain-date-time-style",
+    "valid": false,
+    "code": "DateLocaleOptions(timeStyle = FormatStyle.Short)"
+  },
+  {
+    "name": "plain-time-date-style",
+    "valid": false,
+    "code": "TimeLocaleOptions(dateStyle = FormatStyle.Short)"
+  },
+  {
+    "name": "zoned-locale-zone",
+    "valid": false,
+    "code": "ZonedLocaleOptions(timeZone = \"UTC\")"
+  },
+  {
+    "name": "zoned-style-zone",
+    "valid": false,
+    "code": "ZonedStyleOptions(timeZone = \"UTC\")"
+  },
+  {
+    "name": "mixed-style-components",
+    "valid": false,
+    "code": "DateLocaleOptions(dateStyle = FormatStyle.Short, year = NumericStyle.Numeric)"
+  },
+  {
+    "name": "style-with-component",
+    "valid": false,
+    "code": "DateStyleOptions(dateStyle = FormatStyle.Short, year = NumericStyle.Numeric)"
+  },
+  {
+    "name": "unsupported-duration-style",
+    "valid": false,
+    "code": "DurationLocaleOptions(years = DurationFormatStyle.Digital)"
+  },
+  {
+    "name": "public-round-constructor",
+    "valid": true,
+    "code": "TimeRoundOptions(TimeUnit.Minute, roundingIncrement = 7)"
+  },
+  {
+    "name": "public-difference-constructor",
+    "valid": true,
+    "code": "DateDifferenceOptions(smallestUnit = DateUnit.Year, largestUnit = DateUnit.Day)"
+  },
+  {
+    "name": "null-instant",
+    "valid": false,
+    "code": "let instant: Instant = null\ninstant"
+  },
+  {
+    "name": "null-fields",
+    "valid": false,
+    "code": "t.PlainDate.From(null: DateFields)"
+  },
+  {
+    "name": "instant-wrong-equality-type",
+    "valid": false,
+    "code": "t.Instant.Create(0I).IsEqualTo(t.PlainDate.Create(2024,1,1))"
+  },
+  {
+    "name": "date-wrong-equality-type",
+    "valid": false,
+    "code": "t.PlainDate.Create(2024,1,1).IsEqualTo(t.PlainTime.Create())"
+  },
+  {
+    "name": "patch-wrong-receiver",
+    "valid": false,
+    "code": "t.PlainTime.Create().With(DatePatch.Create(DateChange.Day 1))"
+  },
+  {
+    "name": "rounded-time-loses-capability",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(t.Duration.CreateTime(hours = 25u).Round(DayTimeUnit.Day))"
+  },
+  {
+    "name": "changed-time-loses-capability",
+    "valid": false,
+    "code": "t.Instant.Create(0I).Add(t.Duration.CreateTime().WithMagnitude(DurationPatch.Create(DurationChange.Years 1u)))"
+  },
+  {
+    "name": "string-round-unit",
+    "valid": false,
+    "code": "TimeRoundOptions(\"minute\")"
+  },
+  {
+    "name": "string-difference-unit",
+    "valid": false,
+    "code": "DateDifferenceOptions(largestUnit = \"year\")"
+  },
+  {
+    "name": "date-unit-in-clock-options",
+    "valid": false,
+    "code": "TimeRoundOptions(DateUnit.Day)"
+  },
+  {
+    "name": "named-relative-datetime",
+    "valid": true,
+    "code": "TotalOptions(DateTimeUnit.Hour, RelativeTo.DateTime(t.PlainDateTime.Create(2024,1,1)))"
+  },
+  {
+    "name": "locale-array-style",
+    "valid": true,
+    "code": "t.PlainDate.Create(2024,1,1).ToLocaleString(DateStyleOptions(dateStyle = FormatStyle.Short), locales = [| \"en\" |])"
+  },
+  {
+    "name": "default-locales",
+    "valid": true,
+    "code": "t.PlainDate.Create(2024,1,1).ToLocaleString() |> ignore\nt.PlainDate.Create(2024,1,1).ToLocaleString(options = DateLocaleOptions(month = MonthStyle.Long))"
+  },
+  {
+    "name": "precision-literal-cases",
+    "valid": true,
+    "code": "t.Instant.Create(0I).ToString(InstantFormatOptions(fractionalSecondDigits = FractionalSecondDigits.Auto))"
+  },
+  {
+    "name": "required-round-unit",
+    "valid": false,
+    "code": "TimeRoundOptions()"
+  },
+  {
+    "name": "invalid-precision-count",
+    "valid": false,
+    "code": "FractionalSecondDigits.Digits 10"
+  },
+  {
+    "name": "curried-comparison",
+    "valid": true,
+    "code": "let dates = [t.PlainDate.Create(2024,1,2); t.PlainDate.Create(2024,1,1)]\ndates |> List.sortWith PlainDate.compare |> List.exists (PlainDate.equals (t.PlainDate.Create(2024,1,1)))"
+  },
+  {
+    "name": "classified-error-boundary",
+    "valid": true,
+    "code": "match t.PlainDate.TryParse(\"bad\") with\n| Ok date -> Some date\n| Error(TemporalError.RangeError _) -> None\n| Error error -> raise error.Cause"
+  },
+  {
+    "name": "curried-equality-wrong-type",
+    "valid": false,
+    "code": "Instant.equals (t.Instant.Create(0I)) (t.PlainDate.Create(2024,1,1))"
+  },
+  {
+    "name": "curried-ordering-wrong-type",
+    "valid": false,
+    "code": "PlainDate.compare (t.PlainDate.Create(2024,1,1)) (t.PlainTime.Create())"
+  },
+  {
+    "name": "fixed-compare-general-duration",
+    "valid": false,
+    "code": "FixedDuration.compare (t.Duration.Parse(\"P1M\")) (t.Duration.CreateTime())"
+  },
+  {
+    "name": "month-day-no-ordering",
+    "valid": false,
+    "code": "PlainMonthDay.compare (t.PlainMonthDay.Create(1,1)) (t.PlainMonthDay.Create(2,1))"
+  },
+  {
+    "name": "try-factories",
+    "valid": true,
+    "code": "let parsed: Result<PlainDate, TemporalError> = t.PlainDate.TryParse(\"2024-02-29\")\nlet created: Result<Instant, TemporalError> = t.Instant.TryCreate(0I)\nlet fields: Result<PlainDate, TemporalError> = t.PlainDate.TryFrom(DateFields(2024,2,30), OverflowOptions(overflow = Overflow.Reject))\nparsed, created, fields"
+  },
+  {
+    "name": "try-duration-capabilities",
+    "valid": true,
+    "code": "let time: Result<TimeDuration, TemporalError> = t.Duration.TryCreateTime(hours = 1u)\nlet fixedTime: Result<FixedDuration, TemporalError> = t.Duration.TryCreateFixed(days = 1u)\ntime |> Result.map (fun d -> t.Instant.Create(0I).Add(d)), fixedTime"
+  },
+  {
+    "name": "try-zone-overloads",
+    "valid": true,
+    "code": "t.PlainDate.Create(2024,1,1).TryToZonedDateTime(\"UTC\") |> ignore\nt.PlainDate.Create(2024,1,1).TryToZonedDateTime(DateToZonedOptions(\"UTC\")) |> ignore\nt.PlainDateTime.Create(2024,1,1).TryToZonedDateTime(\"UTC\", DisambiguationOptions(disambiguation = Disambiguation.Reject)) |> ignore\nt.Instant.Create(0I).TryToZonedDateTimeISO(\"UTC\")"
+  },
+  {
+    "name": "try-optional-forwarding",
+    "valid": true,
+    "code": "let options: OverflowOptions option = None\nt.PlainDate.TryParse(\"2024-01-01\", ?options = options) |> ignore\nlet hour: int option = Some 12\nt.PlainTime.TryCreate(?hour = hour)"
+  },
+  {
+    "name": "try-incomplete-fields",
+    "valid": false,
+    "code": "t.PlainDate.TryFrom(DateFields(day = 2))"
+  },
+  {
+    "name": "try-wrong-fields",
+    "valid": false,
+    "code": "t.PlainDate.TryFrom(TimeFields(1))"
+  },
+  {
+    "name": "try-result-not-option",
+    "valid": false,
+    "code": "let parsed: PlainDate option = t.PlainDate.TryParse(\"bad\")\nparsed"
+  },
+  {
+    "name": "try-fixed-not-instant-safe",
+    "valid": false,
+    "code": "t.Duration.TryCreateFixed(days = 1u) |> Result.map (fun d -> t.Instant.Create(0I).Add(d))"
+  }
+]
