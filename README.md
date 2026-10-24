@@ -4,6 +4,14 @@ F# bindings for JavaScript Temporal, with typed units, immutable date/time value
 
 This library targets Fable JavaScript. It does not implement Temporal on .NET or convert through `System.DateTime`, `TimeSpan`, or JavaScript `Date`. Applications supply a native Temporal implementation or a polyfill.
 
+## Why Fable.Temporal?
+
+Fable.Temporal exists to make JavaScript's Temporal API directly available to F# code, with distinct types for instants, calendar dates, wall-clock times, and zoned date-times. Its main benefit is making time-zone intent explicit, so you can apply the right rules when converting local times, scheduling across daylight-saving changes, and doing date arithmetic.
+
+`System.DateTime` does not carry a named time zone, and `DateTimeOffset` records an offset rather than the zone's daylight-saving rules. An offset alone is not enough to calculate “9 am tomorrow in this city” correctly across an offset change. Temporal's `ZonedDateTime` retains the named zone and applies its rules during arithmetic; you can also explicitly choose how to resolve or reject skipped and repeated local times. `TimeSpan` represents a fixed elapsed duration, so it cannot express calendar durations such as “one month”; even “one day” can differ from 24 elapsed hours across a daylight-saving transition.
+
+Fable's experimental [`--test:js-temporal` compiler flag](https://fable.io/vite-plugin-fable/recipes.html#temporal) changes how .NET types such as `DateTime`, `DateTimeOffset`, and `TimeSpan` are compiled, using Temporal underneath while keeping the .NET API. That helps preserve .NET's tick precision and wall-clock arithmetic in JavaScript, but those types still cannot retain a named time zone or represent calendar durations such as months and years. Reach for Fable.Temporal when correctness depends on a particular time zone's rules and explicit handling of daylight-saving transitions. It also exposes calendar durations and full nanosecond precision.
+
 ## Get started
 
 Install the NuGet package in your Fable application and add a Temporal implementation:
